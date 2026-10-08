@@ -1,0 +1,11 @@
+0.1.0
+- Native OpenCode 2.0.23 provider package and connection plugin.
+- Direct Kiro runtime streaming; OpenCode retains tool execution and permissions.
+- Binary framing/CRC checks, tool continuation, native and legacy-tag reasoning.
+- API key, explicit CLI/IDE reuse, Builder ID/Identity Center device authorization,
+  social CLI delegation and host-persisted OAuth refresh.
+- Regional profile/model discovery and reasoning variants.
+- Local package-directory entrypoint for the installed OpenCode loader.
+- Verified live auto text, read-tool continuation and Sonnet reasoning separation;
+  60 deterministic tests and TypeScript build pass. New-account login paths were
+  not exercised live.

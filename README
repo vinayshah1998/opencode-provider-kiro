@@ -1,0 +1,109 @@
+OpenCode Kiro provider
+
+Compatibility: OpenCode 2.0.23, native @opencode/ai runtime. Not a V1 AI SDK plugin.
+Uses direct Kiro inference. OpenCode executes tools and owns permission decisions.
+
+Community plugin: not built by, endorsed by, or affiliated with OpenCode or Kiro.
+Repository: https://github.com/vinayshah1998/opencode-provider-kiro
+
+GITHUB INSTALL
+Add the version-pinned GitHub plugin to opencode.json / opencode.jsonc:
+
+{
+  "plugins": [{
+    "package": "github:vinayshah1998/opencode-provider-kiro#v0.1.0",
+    "options": { "credentialSource": "cli" }
+  }],
+  "model": "kiro/auto"
+}
+
+Sign in using kiro-cli first. Omit options to use /connect instead. This repository
+ships compiled dist files so GitHub installation does not depend on lifecycle
+scripts being permitted by the package manager. No npm publication is required.
+
+MANUAL INSTALL
+  git clone https://github.com/vinayshah1998/opencode-provider-kiro.git
+  cd opencode-provider-kiro
+
+Then follow BUILD and LOCAL INSTALL below.
+
+BUILD
+  bun install --frozen-lockfile
+  bun run build
+  bun test
+
+LOCAL INSTALL
+Merge into your OpenCode opencode.json / opencode.jsonc. Use the PACKAGE DIRECTORY,
+not dist/plugin.js: OpenCode 2.0.23 rejects configured file paths. Replace the
+absolute directory with your checkout path.
+
+{
+  "plugins": ["file:///absolute/path/to/opencode-provider-kiro"],
+  "model": "kiro/auto"
+}
+
+Run /connect, select Kiro, and choose an API key, AWS Builder ID, IAM Identity
+Center, existing CLI/IDE session, external IdP session, or Google/GitHub through
+kiro-cli. Google/GitHub launches the official CLI login page; select the chosen
+provider there. The plugin does not start interactive login on startup.
+
+To explicitly reuse an existing CLI session without importing into OpenCode:
+
+{
+  "plugins": [{
+    "package": "file:///absolute/path/to/opencode-provider-kiro",
+    "options": { "credentialSource": "cli" }
+  }],
+  "model": "kiro/auto"
+}
+
+credentialSource may be "cli" or "ide". reuseCredentials: true checks IDE then
+CLI; selecting a specific source avoids mixing accounts. Local credential stores
+are read only; rotated OAuth credentials imported through /connect are persisted
+by OpenCode. Direct local reuse retains refreshed tokens in memory only.
+Use plugin options for startup discovery: OpenCode 2.0.23 applies providers.kiro
+settings after plugin setup. Provider-only reuse settings work for inference but
+cannot populate discovered models until the first request. Plugin options avoid
+this startup ordering issue.
+
+KIRO_API_KEY, KIRO_REGION and KIRO_PROFILE_ARN are supported. Never put tokens,
+refresh tokens or client secrets in repository configuration. API keys take
+precedence over explicit local reuse. Kiro's own account allowance applies.
+
+The plugin discovers models from the regional profile's management catalog and
+adds reasoning variants when supported. Select kiro/<catalog model ID>#<effort>.
+Catalog cache is in memory and profile/region-scoped. Discovery retains the
+selected connection's inventory until reconnect/restart; failed discovery uses
+that profile's last successful in-process catalog or real auto. There is no
+persistent cross-session catalog cache.
+
+FEATURES
+- AWS binary EventStream framing, CRC validation and bounded incomplete frames.
+- Streaming text, separate reasoning/signatures, tool-input fragments and calls.
+- User/system/history conversion, multiple tool results, images, and plaintext
+  compaction history. OpenCode's native runtime normalizes tool history first.
+- CLI/IDE import, device OAuth, social CLI login, token refresh and profile routing.
+- Native cancellation/timeouts, quota/rate/context error classification.
+- Reported token usage and Kiro credits remain separate. Missing token counts are
+  not invented; OpenCode may display zero when Kiro omits them. No USD estimation.
+
+BOUNDARIES
+Kiro does not advertise every portable generation control. maxTokens,
+temperature and topP produce a warning when unavailable; other unsupported
+controls fail explicitly. Forced tools, disabling parallel tools, tool namespaces,
+and encrypted cross-provider compaction are rejected rather than silently altered.
+Historical reasoning text is not replayed as assistant speech. A reasoning
+signature is retained as response metadata, not sent back through an undocumented
+request field. Generic transient retry belongs to OpenCode; the provider does not
+restart a partially emitted response or execute tools itself.
+
+VERIFICATION
+Build and deterministic behavioral tests cover binary framing, tool loops,
+cancellation, images, transcript pairing, reasoning configuration, refresh races,
+profile-scoped discovery and fresh host credentials. Live OpenCode 2.0.23 smoke:
+Kiro auto returned KIRO_PROVIDER_OK; read tool opened a synthetic fixture and Kiro
+continued with KIRO_TOOL_ROUNDTRIP_47. Discovered claude-sonnet-4.6#low returned
+separate reasoning and text events (323). Sixty regression tests pass.
+Interactive new-account login flows are not live-verified. This is a community
+integration, not an official Kiro/OpenCode provider; service/API compatibility
+can change.
