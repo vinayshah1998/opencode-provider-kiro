@@ -11,7 +11,7 @@ Add the version-pinned GitHub plugin to opencode.json / opencode.jsonc:
 
 {
   "plugins": [{
-    "package": "github:vinayshah1998/opencode-provider-kiro#v0.1.0",
+    "package": "github:vinayshah1998/opencode-provider-kiro#v0.1.1",
     "options": { "credentialSource": "cli" }
   }],
   "model": "kiro/auto"

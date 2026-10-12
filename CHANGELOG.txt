@@ -1,3 +1,8 @@
+0.1.1
+- Remove the prepack hook: compiled dist files are already shipped. This avoids
+  Git dependency preparation invoking a missing npm-cli.js in OpenCode 2.0.23.
+- Pin GitHub installation instructions to v0.1.1.
+
 0.1.0
 - Native OpenCode 2.0.23 provider package and connection plugin.
 - Direct Kiro runtime streaming; OpenCode retains tool execution and permissions.
