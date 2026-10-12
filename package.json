@@ -12,7 +12,7 @@
   "main": "./index.js",
   "exports": { ".": "./dist/plugin.js", "./provider": "./dist/provider.js" },
   "files": ["dist", "index.js", "LICENSE", "README", "CHANGELOG.txt"],
-  "scripts": { "build": "tsc -p tsconfig.json", "test": "bun test" },
+  "scripts": { "compile": "tsc -p tsconfig.json", "test": "bun test" },
   "dependencies": { "@opencode/plugin": "2.0.23", "@opencode/ai": "2.0.23", "@smithy/eventstream-codec": "4.2.14", "effect": "4.0.0-rc.112" },
   "devDependencies": { "typescript": "5.9.3", "@types/bun": "1.3.10" }
 }
